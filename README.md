@@ -1,68 +1,93 @@
 ```mermaid
 flowchart LR
-    %% =========================
-    %% CORE / OSPF AREA (PID 10)
-    %% Router IDs use loopbacks: 10.255.0.ID/32
-    %% =========================
+  %% =====================================================
+  %% Topology from "NETWORK TOPOLOGY.txt"
+  %% OSPF PID 10 • Router Loopbacks: 10.255.0.ID/32
+  %% =====================================================
 
-    subgraph LEFT_LANS["Left LANs"]
-        direction TB
-        PCA["PC-A<br/>(PC-VLAN10)<br/>10.10.2.0/24"]
-        V10["Faculty VLAN 10<br/>10.10.10.0/24"]
-        V20["Student VLAN 20<br/>10.10.20.0/24"]
-        V30["Guest VLAN 30<br/>10.10.30.0/24"]
-        V00["10.10.0.0/24"]
-    end
+  %% ===== Left-side Endpoints =====
+  PCA["PC-A<br/>(to RA g0/0)<br/>10.10.2.0/24"]
+  PCV10["PC-VLAN10 (Faculty)<br/>(to CORE g1/1)<br/>10.10.10.0/24"]
+  PCV20["PC-VLAN20 (Student)<br/>(to CORE g1/2)<br/>10.10.20.0/24"]
+  PCV30["PC-VLAN30 (Guest)<br/>(to CORE g1/3)<br/>10.10.30.0/24"]
+  PCB["PC-B<br/>(to RB g0/0)<br/>10.10.4.0/24"]
+  PCC["PC-C<br/>(to RC e0/0)<br/>10.10.6.0/24"]
 
-    subgraph CORE["Core / Distribution"]
-        direction TB
-        R2["R2 (ID:2)"]
-        R5["R5 (ID:5)"]
-        SW["L3-SWITCH"]
-        R6["R6 (ID:6)"]
-        R4["R4 (ID:4)"]
-        R1["R1 (EDGE-A, ID:1)"]
-        R3["R3 (EDGE-B, ID:3)"]
-    end
+  %% ===== Core / Distribution =====
+  RA["ROUTER A (RA)<br/>OSPF ID:2<br/>Loopback: 10.255.0.2/32"]
+  RB["ROUTER B (RB)<br/>OSPF ID:4<br/>Loopback: 10.255.0.4/32"]
+  RC["ROUTER C (RC)<br/>OSPF ID:6<br/>Loopback: 10.255.0.6/32"]
+  CORE["CORE ROUTER (CORE)<br/>OSPF ID:5<br/>Loopback: 10.255.0.5/32"]
+  L2SW["LAYER 2 SWITCH (L2-SW)"]
 
-    subgraph RIGHT_EDGE["Right Edge & Remote"]
-        direction TB
-        NETA["203.0.113.0/24"]
-        NETB["205.0.113.0/24"]
-        REMRTR["REMOTE<br/>192.0.2.2/24"]
-        REMSRV["REMOTE-SERVER<br/>192.0.2.0/24"]
-    end
+  %% ===== Edge / Remote =====
+  EDA["EDGE ROUTER A (EDGE-A)<br/>OSPF ID:1<br/>Loopback: 10.255.0.1/32"]
+  EDB["EDGE ROUTER B (EDGE-B)<br/>OSPF ID:3<br/>Loopback: 10.255.0.3/32"]
+  REM["L3 SWITCH (REMOTE)"]
+  REMSRV["SERVER DEVICE (REMOTE-SERVER)<br/>LAN 192.0.2.0/24<br/>DNS 192.0.2.53, HTTP 192.0.2.80, TFTP 192.0.2.69"]
 
-    %% =========================
-    %% L3 SWITCH SVI to LANs
-    %% =========================
-    V10 ---|"SVI Vlan10"| SW
-    V20 ---|"SVI Vlan20"| SW
-    V30 ---|"SVI Vlan30"| SW
-    V00 ---|"SVI VlanXX"| SW
-    PCA ---|"Access port in VLAN10"| SW
+  %% ===== Access links to LANs =====
+  PCA ---|e0 ↔ g0/0 | RA
+  PCV10 ---|e0 ↔ g1/1 | CORE
+  PCV20 ---|e0 ↔ g1/2 | CORE
+  PCV30 ---|e0 ↔ g1/3 | CORE
+  PCB ---|e0 ↔ g0/0 | RB
+  PCC ---|e0 ↔ e0/0 | RC
 
-    %% =========================
-    %% CORE LINKS (WITH SUBNETS & IF NAMES)
-    %% =========================
-    R2 ---|"G0/0 <-> G0/0 | 10.10.12.0/29"| R1
-    R2 ---|"G0/2 <-> G0/1 | 10.10.25.0/28"| R5
-    R5 ---|"G0/1 <-> G1/0 | 10.10.245.0/28"| SW
-    SW ---|"G0/1 <-> G0/1 | 10.10.56.0/28"| R6
-    R6 ---|"G0/2 <-> G0/1 | 10.10.46.0/27"| R4
-    R4 ---|"G0/2 <-> G0/2 | 10.10.34.0/29"| R3
-    R3 ---|"G0/0 <-> G0/2 | 10.10.13.0/29"| R1
+  %% ===== Core interconnects (with subnets) =====
+  RA ---|g0/1 ↔ g0/1 | EDA
+  RA ---|g0/2 ↔ ANY | L2SW
+  RA ---|g0/3 ↔ g0/3 | CORE
 
-    %% =========================
-    %% RIGHT-SIDE / EDGE NETWORKS
-    %% =========================
-    R1 ---|"G0/1 | 203.0.113.0/24"| NETA
-    R3 ---|"G0/1 | 205.0.113.0/24"| NETB
+  CORE ---|g0/1 ↔ e0/1 | RC
+  CORE ---|g0/2 ↔ ANY | L2SW
+  CORE ---|g0/3 ↔ g0/3 | RA
 
-    %% Remote router & server off EDGE-A side
-    R1 ---|"G0/3 | 192.0.2.0/24"| REMRTR
-    REMRTR ---|"LAN 192.0.2.0/24"| REMSRV
+  RB ---|g0/1 ↔ g0/1 | EDB
+  RB ---|g0/2 ↔ ANY | L2SW
+  RB ---|g0/3 ↔ e0/3 | RC
+
+  %% ===== Edge ↔ Remote =====
+  EDA ---|g0/0 ↔ g0/1 | REM
+  EDB ---|g0/0 ↔ g0/2 | REM
+
+  %% ===== Remote switch to server =====
+  REM ---|g0/3 ↔ e0 | REMSRV
+
+  %% ===== Shared networks on edges =====
+  linkStyle default stroke-width:2px;
+
+  %% PC-A LAN
+  PCA ---|10.10.2.0/24| RA
+
+  %% RA ↔ EDGE-A
+  RA ---|10.10.12.0/29| EDA
+
+  %% RA ↔ L2-SW (shared L2)
+  RA ---|10.10.245.0/28| L2SW
+  CORE ---|10.10.245.0/28| L2SW
+  RB ---|10.10.245.0/28| L2SW
+
+  %% RA ↔ CORE
+  RA ---|10.10.25.0/28| CORE
+
+  %% CORE SVIs to VLANs
+  PCV10 ---|10.10.10.0/24| CORE
+  PCV20 ---|10.10.20.0/24| CORE
+  PCV30 ---|10.10.30.0/24| CORE
+
+  %% CORE ↔ RC
+  CORE ---|10.10.56.0/28| RC
+
+  %% RB access & peering
+  PCB ---|10.10.4.0/24| RB
+  RB ---|10.10.34.0/29| EDB
+  RB ---|10.10.46.0/27| RC
+
+  %% EDGE-A / EDGE-B ↔ REMOTE L3
+  EDA ---|203.0.113.0/24| REM
+  EDB ---|205.0.113.0/24| REM
+
+  %% REMOTE L3 ↔ REMOTE-SERVER LAN
+  REM ---|192.0.2.0/24| REMSRV
 ```
-> **Note:**  
-> - Mermaid diagrams render natively in GitHub markdown files.  
-> - For best results, ensure your repository has Mermaid enabled and preview in GitHub or compatible editors.
