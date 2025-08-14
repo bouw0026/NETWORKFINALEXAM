@@ -1,8 +1,8 @@
 ```mermaid
 flowchart LR
   %% =====================================================
-  %% Topology from "NETWORK TOPOLOGY.txt"
-  %% OSPF PID 10 • Router Loopbacks: 10.255.0.ID/32
+  %% OSPF PID 10 • Backbone (Area 0) only
+  %% Loopbacks: 10.255.0.ID/32
   %% =====================================================
 
   %% ===== Left-side Endpoints =====
@@ -34,7 +34,7 @@ flowchart LR
   PCB ---|e0 ↔ g0/0 | RB
   PCC ---|e0 ↔ e0/0 | RC
 
-  %% ===== Core interconnects (with subnets) =====
+  %% ===== Core interconnects =====
   RA ---|g0/1 ↔ g0/1 | EDA
   RA ---|g0/2 ↔ ANY | L2SW
   RA ---|g0/3 ↔ g0/3 | CORE
@@ -63,7 +63,7 @@ flowchart LR
   %% RA ↔ EDGE-A
   RA ---|10.10.12.0/29| EDA
 
-  %% RA ↔ L2-SW (shared L2)
+  %% RA ↔ L2-SW
   RA ---|10.10.245.0/28| L2SW
   CORE ---|10.10.245.0/28| L2SW
   RB ---|10.10.245.0/28| L2SW
@@ -90,4 +90,10 @@ flowchart LR
 
   %% REMOTE L3 ↔ REMOTE-SERVER LAN
   REM ---|192.0.2.0/24| REMSRV
+
+  %% =========================
+  %% AREA COLORING (Area 0 only)
+  %% =========================
+  classDef backbone fill:#d4f1f9,stroke:#0a4a60,stroke-width:2px;
+  class RA,CORE,RB,RC,EDA,EDB backbone;
 ```
