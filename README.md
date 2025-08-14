@@ -113,6 +113,8 @@ flowchart LR
 
 This guide provides a comprehensive review of IPv4 addressing, OSPF configuration, NAT implementation, and ACL usage, tailored for final exam preparation in enterprise networking scenarios. It covers design principles, configuration steps, troubleshooting tips, and best practices, referencing lab materials and topology notes.
 
+See the code of the topology, you can copy paste this into any generative AI to help you solve any questions about the current topology for the Final Exam
+
 ---
 
 ## IPv4 Addressing Planning and Validation
