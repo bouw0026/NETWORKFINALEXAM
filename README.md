@@ -96,4 +96,14 @@ flowchart LR
   %% =========================
   classDef backbone fill:#1e3a8a,stroke:#93c5fd,stroke-width:2px,color:#ffffff;
   class RA,CORE,RB,RC,EDA,EDB backbone;
+
+  %% =========================
+  %% LEGEND (Bottom Right)
+  %% =========================
+  subgraph LEGEND[Legend]
+    direction TB
+    L1["<b>Legend:</b>"]
+    L2["Blue shaded = OSPF Area 0 Backbone<br/>Loopback: 10.255.0.ID/32"]
+  end
+  class L2 backbone;
 ```
