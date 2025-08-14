@@ -94,6 +94,6 @@ flowchart LR
   %% =========================
   %% AREA COLORING (Area 0 only)
   %% =========================
-  classDef backbone fill:#d4f1f9,stroke:#0a4a60,stroke-width:2px;
+  classDef backbone fill:#1e3a8a,stroke:#93c5fd,stroke-width:2px,color:#ffffff;
   class RA,CORE,RB,RC,EDA,EDB backbone;
 ```
