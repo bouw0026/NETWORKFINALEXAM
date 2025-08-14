@@ -124,6 +124,8 @@ This guide provides a comprehensive review of IPv4 addressing, OSPF configuratio
 - **LAN Segments:** Use `/24` subnets (e.g., `VLAN10`, `PC-A` network).
 - **Inter-Router Links:** Use smaller subnets (`/28`, `/29`) for address conservation.
 
+Final exam network topology diagram (IPv4). All routers use a systematic addressing scheme: each link’s network address encodes the IDs of the devices connected (e.g. routers with IDs 1 and 3 share network 10.10.13.0/29), and each router has a loopback 10.255.0.<ID>/32 for its OSPF Router ID. LAN segments (e.g. VLAN10, PC-A network) use /24 subnets, while inter-router links use smaller subnets (/28, /29) to conserve addresses.
+
 ### Subnet Design and Mask Selection
 
 - **List All Segments:** Include every router-to-router link and each LAN/VLAN.
@@ -131,6 +133,8 @@ This guide provides a comprehensive review of IPv4 addressing, OSPF configuratio
 - **VLSM:** Assign larger masks to big networks, smaller to point-to-point links.
 - **Addressing Strategy:** Network IDs encode connected router IDs (e.g., `10.10.13.0/29` for EDGE-A (ID 1) and EDGE-B (ID 3)).
 - **Loopbacks:** Set to `/32` for unique identification.
+
+To prepare an IPv4 addressing plan, start by listing all network segments in the topology: this includes every router-to-router link and each LAN/VLAN. For each segment, choose an appropriate subnet mask based on the number of hosts needed. Point-to-point links can use a very small subnet (e.g. /30 for 2 hosts), but in this design /29 or /28 networks were used for link readability and future growth. Larger LANs (user VLANs, PC subnets) use /24 to accommodate many hosts. Using VLSM (Variable Length Subnet Masking) ensures efficient IP usage by assigning bigger masks to large networks and smaller masks to point-to-point links. Addressing Strategy: The final exam topology uses a consistent scheme where network IDs encode connected router IDs. For example, if Router EDGE-A has ID 1 and EDGE-B has ID 3, their connecting network is 10.10.13.0/29. This rule makes it easy to deduce subnets during troubleshooting. All subnets fall under a common internal range (10.10.x.x in this case) for simplicity. Each router’s OSPF Router ID is derived from its ID number as 10.255.0.<ID> (configured on a loopback interface). Using loopbacks for router IDs is a best practice to ensure the ID is predictable and stable, rather than relying on an auto-selected interface IP. This prevents changes in physical interfaces from altering the OSPF ID and affecting neighbor relationships.
 
 ### Interface Address Assignment
 
