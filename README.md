@@ -1,9 +1,8 @@
 ```mermaid
 flowchart LR
   %% =====================================================
+  %% Topology from "NETWORK TOPOLOGY.txt"
   %% OSPF PID 10 • Router Loopbacks: 10.255.0.ID/32
-  %% Area 0 (Backbone) = Blue
-  %% Area 1 (Example)  = Orange
   %% =====================================================
 
   %% ===== Left-side Endpoints =====
@@ -35,7 +34,7 @@ flowchart LR
   PCB ---|e0 ↔ g0/0 | RB
   PCC ---|e0 ↔ e0/0 | RC
 
-  %% ===== Core interconnects =====
+  %% ===== Core interconnects (with subnets) =====
   RA ---|g0/1 ↔ g0/1 | EDA
   RA ---|g0/2 ↔ ANY | L2SW
   RA ---|g0/3 ↔ g0/3 | CORE
@@ -64,7 +63,7 @@ flowchart LR
   %% RA ↔ EDGE-A
   RA ---|10.10.12.0/29| EDA
 
-  %% RA ↔ L2-SW
+  %% RA ↔ L2-SW (shared L2)
   RA ---|10.10.245.0/28| L2SW
   CORE ---|10.10.245.0/28| L2SW
   RB ---|10.10.245.0/28| L2SW
@@ -74,5 +73,21 @@ flowchart LR
 
   %% CORE SVIs to VLANs
   PCV10 ---|10.10.10.0/24| CORE
-  PCV20 ---|10.10.20.0/24|
+  PCV20 ---|10.10.20.0/24| CORE
+  PCV30 ---|10.10.30.0/24| CORE
+
+  %% CORE ↔ RC
+  CORE ---|10.10.56.0/28| RC
+
+  %% RB access & peering
+  PCB ---|10.10.4.0/24| RB
+  RB ---|10.10.34.0/29| EDB
+  RB ---|10.10.46.0/27| RC
+
+  %% EDGE-A / EDGE-B ↔ REMOTE L3
+  EDA ---|203.0.113.0/24| REM
+  EDB ---|205.0.113.0/24| REM
+
+  %% REMOTE L3 ↔ REMOTE-SERVER LAN
+  REM ---|192.0.2.0/24| REMSRV
 ```
