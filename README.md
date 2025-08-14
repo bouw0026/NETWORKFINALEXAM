@@ -141,11 +141,16 @@ To prepare an IPv4 addressing plan, start by listing all network segments in the
 - Assign IPs consistently (lower-numbered router gets first usable address).
 - Document each interface and configure loopbacks (e.g., `interface Loopback0; ip address 10.255.0.2 255.255.255.255`).
 
+Once subnets are determined, assign IP addresses to each interface in a consistent manner. It’s common to give the lower-numbered router or central device the first usable address and the other the next address in the subnet. For example, on network 10.10.12.0/29 between RA (ID 2) and EDGE-A (ID 1), EDGE-A could take 10.10.12.1 and RA 10.10.12.2. Use the diagram’s labels or an addressing table to avoid confusion. Document each interface with a description of the link. Don’t forget to configure the loopback interfaces (e.g. interface Loopback0; ip address 10.255.0.2 255.255.255.255 on RA for ID 2). Having loopbacks set to /32 ensures they are unique host addresses used for identification.
+
 ### Validation
 
 - Use `show ip interface brief` to verify interfaces.
 - Ping across each link to confirm addressing and detect overlaps.
 - Ensure each link is a unique subnet.
+
+After configuring all interface addresses, verify and test connectivity. Ensure each interface is up/up with show ip interface brief and that the IP/mask matches your plan. A good practice is to ping across each link – for every pair of directly connected routers, ping the neighbor’s IP to confirm the addressing is correct and there are no IP overlaps. If a ping fails on a directly connected interface, check for mismatched subnet masks or typos in the IP. Also confirm that no two interfaces share the same network (each link should be its own unique subnet). By cross-checking against the addressing scheme (and the rules provided in the topology notes), you can catch errors early. This careful planning and validation of IPv4 addressing sets the stage for dynamic routing to work correctly.
+OSPFv2 Configuration and Verification
 
 ---
 
